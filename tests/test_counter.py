@@ -66,7 +66,7 @@ class CounterTest(TestCase):
         self.assertGreater(updated_counter_value, base_value)
 
     def test_update_a_non_existent_counter(self):
-        """It should return an error for a nonexistent counter"""
+        """It should return an error for updating a nonexistent counter"""
         # 1. Make a call to update a counter that does not exist
         result = self.client.put('/counters/non_existent')
 
@@ -91,9 +91,30 @@ class CounterTest(TestCase):
         self.assertEqual(counter_value, 0)
 
     def test_read_a_non_existent_counter(self):
-        """It should return an error for a nonexistent counter"""
+        """It should return an error for reading a nonexistent counter"""
         # 1. Make a call to read a counter that does not exist
         result = self.client.get('/counters/non_existent')
+
+        # 2. Make sure that a 404 error is returned
+        self.assertEqual(result.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_a_counter(self):
+        """It should delete a counter"""
+        # 1. Make a call to create_counter(name)
+        create_counter = self.client.post('/counters/deleted')
+        # 1a. Checking that the counter was successfully created
+        self.assertEqual(create_counter.status_code, status.HTTP_201_CREATED)
+
+        # 2. Deleting the recently created counter
+        create_counter = self.client.delete('/counters/deleted')
+
+        # 3. Making sure that the counter was successfully deleted
+        self.assertEqual(create_counter.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_a_non_existent_counter(self):
+        """It should return an error for deleting a nonexistent counter"""
+        # 1. Make a call to delete a counter that does not exist
+        result = self.client.delete('/counters/non_existent')
 
         # 2. Make sure that a 404 error is returned
         self.assertEqual(result.status_code, status.HTTP_404_NOT_FOUND)

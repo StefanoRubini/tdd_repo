@@ -24,7 +24,6 @@ def create_counter(name):
     return {name: COUNTERS[name]}, status.HTTP_201_CREATED
 
 
-# this will be the same for everyone
 @app.route('/counters/<name>', methods=['PUT'])
 def update_counter(name):
     """Update a counter"""
@@ -45,9 +44,9 @@ def update_counter(name):
     return {name: COUNTERS[name]}, status.HTTP_200_OK
 
 
-# this will be the same for everyone
 @app.route('/counters/<name>', methods=['GET'])
 def read_counter(name):
+    """Read a counter"""
     # create a route for method GET on endpoint /counters/<name>
     app.logger.info(f"Request to read counter: {name}")
 
@@ -60,3 +59,23 @@ def read_counter(name):
 
     # if the counter does exist, read it and return its value and a 200_OK return code
     return {name: COUNTERS[name]}, status.HTTP_200_OK
+
+
+@app.route('/counters/<name>', methods=['DELETE'])
+def delete_counter(name):
+    """Delete a counter"""
+    # create a route for method DELETE on endpoint /counters/<name>
+    app.logger.info(f"Request to delete counter: {name}")
+
+    # create a function to implement that route
+    global COUNTERS
+
+    # check if the counter exists
+    if name not in COUNTERS:
+        return {"Message": f"Counter {name} does not exist"}, status.HTTP_404_NOT_FOUND
+
+    # if the counter does exist, delete it
+    del COUNTERS[name]
+
+    # return an empty response and a 204_NO_CONTENT return code
+    return {}, status.HTTP_204_NO_CONTENT
